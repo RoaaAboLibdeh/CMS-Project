@@ -1,2 +1,2 @@
 # CMS-Project
-Control Management System - PHP Laravel
+This is my Laravel CMS project
