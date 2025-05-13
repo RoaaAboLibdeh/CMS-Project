@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Card;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -20,44 +21,45 @@ use Illuminate\Support\Facades\Auth;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup ='Settings';
+
 
     
-    public static function canAccess(): bool
-    {
-        return Auth::user()?->hasRole('admin');
-    }
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            TextInput::make('name')
-                ->required()
-                ->maxLength(255)
-                ->label('Full Name'),
+            Card::make()->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255)
+                    ->label('Full Name'),
 
-            TextInput::make('email')
-                ->required()
-                ->email()
-                ->maxLength(255)
-                ->label('Email Address'),
+                TextInput::make('email')
+                    ->required()
+                    ->email()
+                    ->maxLength(255)
+                    ->label('Email Address'),
 
-            TextInput::make('password')
-                ->password()
-                ->maxLength(255)
-                ->label('Password')
-                ->required(fn($livewire) => $livewire instanceof Pages\CreateUser)
-                ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
-                ->dehydrated(fn($state) => filled($state))
-                ->nullable(),
+                TextInput::make('password')
+                    ->password()
+                    ->maxLength(255)
+                    ->label('Password')
+                    ->required(fn($livewire) => $livewire instanceof Pages\CreateUser)
+                    ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
+                    ->dehydrated(fn($state) => filled($state))
+                    ->nullable(),
 
-            Select::make('roles')
-                ->multiple()
-                ->preload()
-                ->searchable()
-                ->relationship('roles', 'name')
-                ->label('Assign Roles')
-                ->getOptionLabelFromRecordUsing(fn($record) => ucfirst($record->name)),
+                Select::make('roles')
+                    ->multiple()
+                    ->preload()
+                    ->searchable()
+                    ->relationship('roles', 'name')
+                    ->label('Assign Roles')
+                    ->getOptionLabelFromRecordUsing(fn($record) => ucfirst($record->name)),
+            ])
         ]);
     }
 
@@ -65,14 +67,20 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+
                 Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('email')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('created_at')->dateTime(),
             ])
+
+
+
+
             ->actions([
                 EditAction::make(),
-                DeleteAction::make(),
-            ])
+                DeleteAction::make()
+                ->visible(fn () => auth()->user()->can('Delete User')),
+                            ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()

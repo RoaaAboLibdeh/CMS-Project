@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\UserResource\Pages;
+namespace App\Filament\Resources\PermissionResource\Pages;
 
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\PermissionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListUsers extends ListRecords
+class ListPermissions extends ListRecords
 {
-    protected static string $resource = UserResource::class;
+    protected static string $resource = PermissionResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -16,10 +16,8 @@ class ListUsers extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
-
     public static function canAccess(array $parameters = []): bool
     {
-        return auth()->user()?->can('View Users');
+        return auth()->user()?->can('View Permissions');
     }
 }
-
