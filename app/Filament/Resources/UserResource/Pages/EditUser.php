@@ -26,7 +26,7 @@ class EditUser extends EditRecord
     }
 
     public static function canAccess(array $parameters = []): bool
-    {
-        return auth()->user()?->can('Edit User');
-    }
+{
+    return auth()->user()?->can('dashboard.user_management.users.edit');
+}
 }

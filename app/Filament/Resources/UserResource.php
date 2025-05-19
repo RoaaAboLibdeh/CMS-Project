@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Models\User;
+use Modules\Core\Entities\User;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Form;
@@ -79,7 +79,7 @@ class UserResource extends Resource
             ->actions([
                 EditAction::make(),
                 DeleteAction::make()
-                ->visible(fn () => auth()->user()->can('Delete User')),
+                ->visible(fn () => auth()->user()->can('dashboard.user_management.users.delete')),
                             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -101,4 +101,10 @@ class UserResource extends Resource
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
+
+     public static function canAccess(): bool
+{
+    
+    return auth()->user()?->can('dashboard.user_management.users.view');
+}
 }

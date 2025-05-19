@@ -19,6 +19,6 @@ class CreateRole extends CreateRecord
     }
     public static function canAccess(array $parameters = []): bool
     {
-        return auth()->user()?->can('Create Role');
+        return auth()->user()?->can('dashboard.user_management.roles.create');
     }
 }

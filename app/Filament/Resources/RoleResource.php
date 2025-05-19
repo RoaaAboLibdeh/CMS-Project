@@ -3,8 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoleResource\Pages;
-use App\Models\Role;
-use App\Models\PermissionGroup;
+use Modules\Core\Entities\Role;
+use Modules\Core\Entities\Permission;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\CheckboxList;
@@ -16,7 +16,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
-
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
@@ -40,24 +42,27 @@ class RoleResource extends Resource
         ]);
     }
 
-    protected static function getPermissionGroupCards(): array
-    {
-        $groups = PermissionGroup::with('permissions')->get();
+protected static function getPermissionGroupCards(): array
+{
+    $groupedPermissions = Permission::all()->groupBy('group');
 
-        return $groups->map(function ($group) {
-            return Card::make()
-                ->schema([
-
-
-                    CheckboxList::make('permissions')
-                        ->relationship('permissions', 'name')
-                        ->label($group->name)
-                        ->options($group->permissions->pluck('name', 'id')->toArray())
-                        ->columns(1),
-                ])
-                ->columnSpan(1);
-        })->toArray();
-    }
+    return [
+        Grid::make(4) // 4 columns per row
+            ->schema(
+                $groupedPermissions->map(function ($permissions, $groupName) {
+                    return Card::make()
+                        ->schema([
+                            CheckboxList::make('permissions')
+                                ->label($groupName)
+                                ->relationship('permissions', 'name')
+                                ->options($permissions->pluck('label', 'id')->toArray())
+                                ->columns(2),
+                        ])
+                        ->columnSpan(1); // Each card takes up 1 column
+                })->values()->toArray()
+            ),
+    ];
+}
 
     public static function table(Table $table): Table
     {
@@ -68,6 +73,9 @@ class RoleResource extends Resource
             ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                DeleteAction::make()
+                ->visible(fn () => auth()->user()->can('dashboard.user_management.roles.delete')),
+                            
                 
             ])
             ->bulkActions([
@@ -90,4 +98,11 @@ class RoleResource extends Resource
             'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }
+
+    public static function canAccess(): bool
+{
+    
+    return auth()->user()?->can('dashboard.user_management.roles.view');
+}
+
 }

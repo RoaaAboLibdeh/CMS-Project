@@ -16,9 +16,9 @@ class ListRoles extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
-
-    public static function canAccess(array $parameters = []): bool
+public static function canAccess(array $parameters = []): bool
     {
-        return auth()->user()?->can('View Roles');
+        return auth()->user()?->can('dashboard.user_management.roles');
     }
+
 }

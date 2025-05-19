@@ -26,6 +26,6 @@ class EditRole extends EditRecord
     }
     public static function canAccess(array $parameters = []): bool
     {
-        return auth()->user()?->can('Edit Role');
+        return auth()->user()?->can('dashboard.user_management.roles.edit');
     }
 }

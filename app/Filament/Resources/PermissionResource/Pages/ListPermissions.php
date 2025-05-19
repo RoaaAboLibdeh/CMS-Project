@@ -16,8 +16,5 @@ class ListPermissions extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
-    public static function canAccess(array $parameters = []): bool
-    {
-        return auth()->user()?->can('View Permissions');
-    }
+  
 }
