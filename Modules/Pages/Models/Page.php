@@ -22,4 +22,9 @@ class Page extends Model
     // {
     //     // return PageFactory::new();
     // }
+    public function category()
+{
+    return $this->belongsTo(\Modules\Category\Entities\Category::class);
+}
+
 }

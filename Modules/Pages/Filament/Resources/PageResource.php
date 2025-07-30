@@ -23,21 +23,27 @@ class PageResource extends Resource
     {
         return $form
             ->schema([
-                 Forms\Components\TextInput::make('title')
-                ->required()
-                ->live(onBlur: true)
-                ->afterStateUpdated(fn($state, callable $set) => $set('slug', \Str::slug($state))),
-            
-            Forms\Components\TextInput::make('slug')->required()->unique(ignoreRecord: true),
+                Forms\Components\TextInput::make('title')
+                    ->required()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn($state, callable $set) => $set('slug', \Str::slug($state))),
 
-            Forms\Components\RichEditor::make('content')->required(),
+                Forms\Components\TextInput::make('slug')->required()->unique(ignoreRecord: true),
 
-            Forms\Components\Fieldset::make('SEO')->schema([
-                Forms\Components\TextInput::make('meta_title'),
-                Forms\Components\Textarea::make('meta_description'),
-            ]),
+                Forms\Components\RichEditor::make('content')->required(),
 
-            Forms\Components\Toggle::make('is_active')->label('Active'),
+                Forms\Components\Fieldset::make('SEO')->schema([
+                    Forms\Components\TextInput::make('meta_title'),
+                    Forms\Components\Textarea::make('meta_description'),
+                ]),
+
+                Forms\Components\Toggle::make('is_active')->label('Active'),
+                Forms\Components\Select::make('category_id')
+                    ->label('Category')
+                    ->options(\Modules\Category\Entities\Category::pluck('name', 'id'))
+                    ->searchable()
+                    ->required(),
+
             ]);
     }
 
@@ -49,6 +55,8 @@ class PageResource extends Resource
                 Tables\Columns\TextColumn::make('slug'),
                 Tables\Columns\IconColumn::make('is_active')->boolean(),
                 Tables\Columns\TextColumn::make('created_at')->dateTime(),
+                Tables\Columns\TextColumn::make('category.name')->label('Category'),
+
             ])
             ->filters([
                 //
