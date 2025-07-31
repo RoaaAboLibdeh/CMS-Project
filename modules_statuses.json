@@ -2,5 +2,6 @@
     "Core": true,
     "Pages": true,
     "Category": true,
-    "Menu": true
+    "Menu": true,
+    "Blog": true
 }
