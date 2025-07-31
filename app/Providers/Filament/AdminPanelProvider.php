@@ -17,6 +17,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Modules\Media\Filament\Resources\MediaResource;
 use Modules\Pages\Filament\Resources\PageResource;
 use Modules\Category\Filament\Resources\CategoryResource;
 use Modules\Menu\Filament\Resources\MenuResource;
@@ -42,7 +43,8 @@ class AdminPanelProvider extends PanelProvider
                 PageResource::class,
                 CategoryResource::class,
                 MenuResource::class,
-                PostResource::class
+                PostResource::class,
+                
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
